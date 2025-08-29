@@ -1,12 +1,13 @@
 import streamlit as st
 import numpy as np
 from PIL import Image
-import tflite_runtime.interpreter as tflite
+import tensorflow as tf   
 
 # ----------------- CONFIG -----------------
 st.set_page_config(page_title="Cats vs Dogs Classifier",
                    page_icon="🐾",
                    layout="wide")
+
 
 PRIMARY_COLOR = "#20B2AA"
 
@@ -14,19 +15,22 @@ PRIMARY_COLOR = "#20B2AA"
 PAGES = ["Home", "Demo", "About", "Credits"]
 choice = st.sidebar.radio("Navigation", PAGES)
 
+
 # ----------------- LOAD MODEL -----------------
 @st.cache_resource
 def load_model():
-    interpreter = tflite.Interpreter(model_path="trained_model/cats_dogs_model.tflite")
+    interpreter = tf.lite.Interpreter(model_path="trained_model/cats_dogs_model.tflite")
     interpreter.allocate_tensors()
     return interpreter
 
 interpreter = load_model()
 
+# Get input & output details (needed for predictions)
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 
 class_names = ["Cat", "Dog"]
+
 
 # ----------------- PREDICTION FUNCTION -----------------
 def predict(image: Image.Image):
@@ -42,11 +46,13 @@ def predict(image: Image.Image):
     confidence = preds if label == "Dog" else 1 - preds
     return label, float(confidence)
 
+
 # ----------------- HOME -----------------
 if choice == "Home":
     st.markdown(f"<h1 style='color:{PRIMARY_COLOR};'>🐾 Cats vs Dogs Classifier</h1>", unsafe_allow_html=True)
     st.write("Upload an image of a **Cat or Dog** and our AI model will predict the result with confidence.")
     st.image("https://placekitten.com/800/300", use_column_width=True)
+
 
 # ----------------- DEMO -----------------
 elif choice == "Demo":
@@ -57,7 +63,7 @@ elif choice == "Demo":
         image = Image.open(uploaded_file).convert("RGB")
         st.image(image, caption="Uploaded Image", use_column_width=True)
 
-        # Prediction
+        
         label, confidence = predict(image)
 
         st.subheader(f"Prediction: {label}")
@@ -67,12 +73,14 @@ elif choice == "Demo":
         col1.metric("Confidence", f"{confidence:.2%}")
         col2.metric("Class", label)
 
+
 # ----------------- ABOUT -----------------
 elif choice == "About":
     st.header("ℹ️ About this App")
     st.write("This AI-powered web app uses **Transfer Learning with MobileNetV2** trained on the **Cats vs Dogs dataset**.")
     st.write("- Model Accuracy: ~98%")
-    st.write("- Frameworks: TensorFlow Lite + Streamlit")
+    st.write("- Frameworks: TensorFlow Lite (via TensorFlow) + Streamlit")
+
 
 # ----------------- CREDITS -----------------
 elif choice == "Credits":
