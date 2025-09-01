@@ -67,7 +67,8 @@ elif choice == "Demo":
         label, confidence = predict(image)
 
         st.subheader(f"Prediction: {label}")
-        st.progress(confidence)
+        st.progress(min(max(confidence, 0.0), 1.0))
+
 
         col1, col2 = st.columns(2)
         col1.metric("Confidence", f"{confidence:.2%}")
