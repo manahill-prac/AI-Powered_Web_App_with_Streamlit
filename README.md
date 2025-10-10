@@ -9,7 +9,6 @@
 This project is an **AI-powered image classifier** that predicts whether an uploaded picture is of a **Cat** or a **Dog**.
 The app is built using **Streamlit** and powered by a **MobileNetV2 model fine-tuned on the Cats vs Dogs dataset**, converted to **TensorFlow Lite (TFLite)** for lightweight deployment.
 
-🔗 Try the Live App: *\[Streamlit Cloud Link]*
 
 ---
 ##  Installation & Local Run
